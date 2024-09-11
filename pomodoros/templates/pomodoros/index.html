@@ -1,15 +1,26 @@
 {% extends "main/base.html" %}
 {% block content %}
 <div class="container-xxl d-flex flex-column gap-1 justify-content-start align-items-center">
+    <a href="{% url 'pomodoros:create' %}" class="btn btn-success">
+        Create new pomodoro
+    </a>
     {% for pomodoro in pomodoros %}
     <div class="m2 container-sm border rounded-3">
         <div class="card-body">
-            <div class="card-title">
+            <div class="card-title text-bold">
                 {{ pomodoro.user.username }}'s Pomodoro
             </div>
             <div class="card-text">
                 <p class="text-muted">Start time: {{ pomodoro.start_date }}</p>
                 <p class="text-muted">End time: {{ pomodoro.end_date }}</p>
+                <div>
+                    <a href="{% url 'pomodoros:update' pomodoro.id %}" class="btn btn-warning">
+                        Edit
+                    </a>
+                    <a href="{% url 'pomodoros:delete' pomodoro.id %}" class="btn btn-danger ml-5">
+                        Delete
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -4,7 +4,6 @@ from django.urls import reverse
 
 
 class UserAuthTests(TestCase):
-
     def create_user(self):
         return User.objects.create_user("Peter", "quill@guardians.com", "Password123$")
 

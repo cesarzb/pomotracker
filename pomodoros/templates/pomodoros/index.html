@@ -1,0 +1,19 @@
+{% extends "main/base.html" %}
+{% block content %}
+<div class="container-xxl d-flex flex-column gap-1 justify-content-start align-items-center">
+    {% for pomodoro in pomodoros %}
+    <div class="m2 container-sm border rounded-3">
+        <div class="card-body">
+            <div class="card-title">
+                {{ pomodoro.user.username }}'s Pomodoro
+            </div>
+            <div class="card-text">
+                <p class="text-muted">Start time: {{ pomodoro.start_date }}</p>
+                <p class="text-muted">End time: {{ pomodoro.end_date }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+{% endblock %}

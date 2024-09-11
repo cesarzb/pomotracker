@@ -12,8 +12,13 @@
 
 <body>
 
-    <nav class="navbar navbar-dark bg-primary">
+    <nav class="navbar navbar-dark bg-primary d-flex justify-content-between">
         <a href="{% url 'main:home' %}" class="text-white nav-link">Home</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="text-white nav-link">Log out</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="text-white nav-link">Log in</a>
+        {% endif %}
     </nav>
     <div class="d-flex justify-content-center pt-5">
         {% block content %}

@@ -2,7 +2,6 @@ import datetime
 from django.utils import timezone
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Pomodoro
 from django.urls import reverse
 
 
@@ -56,10 +55,17 @@ class PomodoroTests(TestCase):
         """
         user = self.create_and_log_in_user()
         pomodoro1 = self.create_pomodoro_for_user(user, 37)
-        pomodoro2 = self.create_pomodoro_for_user(user, 104)
+        pomodoro2 = self.create_pomodoro_for_user(user, 1544)
+
+        date1 = pomodoro1.end_date.date()
+        date2 = pomodoro2.end_date.date()
+        query_set = {}
+        query_set[date2] = [pomodoro2]
+        query_set[date1] = [pomodoro1]
+
         response = self.client.get(reverse("pomodoros:index"))
         self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["pomodoros"], [pomodoro1, pomodoro2])
+        self.assertQuerySetEqual(response.context["grouped_pomodoros"], query_set)
 
     # UPDATE
     def test_user_can_update_his_pomodoro(self):
@@ -118,12 +124,18 @@ class PomodoroTests(TestCase):
         self.client.logout()
         pomodoro1 = self.create_pomodoro_for_user(user, 37)
         other_user = self.create_and_log_in_user("Parker")
-        pomodoro2 = self.create_pomodoro_for_user(other_user, 45)
+        pomodoro2 = self.create_pomodoro_for_user(other_user, 1485)
         pomodoro3 = self.create_pomodoro_for_user(other_user, 12)
+
+        date2 = pomodoro2.end_date.date()
+        date3 = pomodoro3.end_date.date()
+        query_set = {}
+        query_set[date2] = [pomodoro2]
+        query_set[date3] = [pomodoro3]
 
         response = self.client.get(reverse("pomodoros:index"))
         self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["pomodoros"], [pomodoro3, pomodoro2])
+        self.assertQuerySetEqual(response.context["grouped_pomodoros"], query_set)
 
     # UPDATE
     def test_user_cannot_update_someones_pomodoro(self):

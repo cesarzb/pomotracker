@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.utils import timezone
 from django.http import Http404
 from .models import Pomodoro
 from .forms import PomodoroForm
+from django.db.models.functions import Trunc
 
 
 @login_required
 def index(request):
-    pomodoros = Pomodoro.objects.filter(user=request.user).order_by("-end_date")
-    return render(request, "pomodoros/index.html", {"pomodoros": pomodoros})
+    grouped_pomodoros = Pomodoro.objects.grouped_by_day(request.user)
+    return render(
+        request, "pomodoros/index.html", {"grouped_pomodoros": grouped_pomodoros}
+    )
 
 
 @login_required

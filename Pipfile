@@ -13,6 +13,7 @@ crispy-bootstrap5 = "*"
 django-environ = "*"
 gunicorn = "*"
 whitenoise = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

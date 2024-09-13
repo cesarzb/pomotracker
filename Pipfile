@@ -11,6 +11,8 @@ psycopg2 = "*"
 django-crispy-forms = "*"
 crispy-bootstrap5 = "*"
 django-environ = "*"
+gunicorn = "*"
+whitenoise = "*"
 
 [dev-packages]
 

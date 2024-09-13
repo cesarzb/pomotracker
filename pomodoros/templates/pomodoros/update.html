@@ -1,10 +1,1 @@
-{% extends "main/base.html" %}
-{% load crispy_forms_tags %}
-
-{% block content %}
-<form method="post" action="{% url 'pomodoros:update' pomodoro_id %}" style="max-width: 500px; min-width: 500px;">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="Update" class="btn btn-primary">
-</form>
-{% endblock %}
+{% include "pomodoros/_pomodoro_form.html" with url_value='pomodoros:update' argument=pomodoro_id button_name='Update'%}

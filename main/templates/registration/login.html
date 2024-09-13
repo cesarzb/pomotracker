@@ -1,12 +1,1 @@
-{% extends "main/base.html" %}
-{% load crispy_forms_tags %}
-
-{% block content %}
-<form method="post" action="{% url 'login' %}" style="max-width: 500px; min-width: 500px;">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="Login" class="btn btn-primary">
-    <p class="mt-2"><a href="{% url 'main:sign_up' %}">Don't have an account?</a></p>
-    <input type="hidden" name="next" value="{{ next }}">
-</form>
-{% endblock %}
+{% include "registration/_user_form.html" with action_url="login" button_text="Login" redirect_url="main:sign_up" redirect_text="Don't have an account?"%}

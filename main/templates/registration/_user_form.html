@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post" action="{% url action_url %}" style="max-width: 500px; min-width: 500px;">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value={{ button_text }} class="btn btn-primary">
+    <p class="mt-2"><a href="{% url redirect_url %}">{{ redirect_text }}</a></p>
+    <input type="hidden" name="next" value="{{ next }}">
+</form>
+{% endblock %}

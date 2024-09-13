@@ -1,0 +1,21 @@
+{% extends "main/base.html" %}
+{% block content %}
+<div class="rounded border col-6 p-4">
+    <div class="display-6 fw-bolder border-bottom pb-2">
+        {{ pomodoro.user.username }}'s Pomodoro
+    </div>
+
+    <div class="mt-4 border-bottom pb-2">
+        <p class="fs-5">Start time: {{ pomodoro.start_date }}</p>
+        <p class="fs-5">End time: {{ pomodoro.end_date }}</p>
+    </div>
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'pomodoros:update' pomodoro.id %}" class="btn btn-warning">
+            Edit
+        </a>
+        <a href="{% url 'pomodoros:delete' pomodoro.id %}" class="btn btn-danger ml-5">
+            Delete
+        </a>
+    </div>
+</div>
+{% endblock %}

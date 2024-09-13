@@ -1,41 +1,35 @@
 {% extends "main/base.html" %}
+{% block head %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            themeSystem: 'bootstrap5',
+            events: {{ calendar_pomodoros| safe }},
+        eventClick: function (info) {
+            info.jsEvent.preventDefault();
+
+            if (info.event.url) {
+                window.open(info.event.url);
+            }
+        }
+        });
+
+    calendar.render();
+    });
+</script>
+{% endblock %}
 {% block content %}
-<div class="container-xxl d-flex flex-column justify-content-start align-items-center">
-    <a href="{% url 'pomodoros:create' %}" class="btn btn-success">
-        Create new pomodoro
-    </a>
 
-    <div class="d-flex flex-wrap justify-content-start align-items-start mt-2">
+<div class="container-fluid d-flex justify-content-center">
+    <div class="d-flex flex-column justify-content-start align-items-center w-100">
+        <a href="{% url 'pomodoros:create' %}" class="btn btn-success">
+            Create new pomodoro
+        </a>
 
+        <div id='calendar' class="w-50 mt-3"></div>
 
-        {% for date, pomodoros in grouped_pomodoros.items %}
-
-        <div class="rounded m-2">
-            <div class="bg-primary py-2 px-4 text-white rounded-top fs-3">{{ date }}</div>
-            {% for pomodoro in pomodoros %}
-
-            <div class="px-4 py-2 border-bottom border-start border-end">
-                <div class="card-title">
-                    {{ pomodoro.user.username }}'s Pomodoro
-                </div>
-                <div class="">
-                    <p class="text-muted">Start time: {{ pomodoro.start_date }}</p>
-                    <p class="text-muted">End time: {{ pomodoro.end_date }}</p>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <a href="{% url 'pomodoros:update' pomodoro.id %}" class="btn btn-warning">
-                        Edit
-                    </a>
-                    <a href="{% url 'pomodoros:delete' pomodoro.id %}" class="btn btn-danger ml-5">
-                        Delete
-                    </a>
-                </div>
-            </div>
-
-            {% endfor %}
-        </div>
-        {% endfor %}
     </div>
-
 </div>
 {% endblock %}

@@ -22,7 +22,7 @@ class PomodoroTests(TestCase):
     # CREATE
     def test_creating_post_works(self):
         """
-        This test will check if user can successfully update his pomodoro
+        This test will check if user can successfully create a pomodoro
         """
         user = self.create_and_log_in_user()
         end_date = timezone.now() - datetime.timedelta(minutes=12)
@@ -51,21 +51,25 @@ class PomodoroTests(TestCase):
     # READ
     def test_user_can_list_his_pomodoros(self):
         """
-        This test will check if users pomodoros are shown in index view
+        This test will check if user's pomodoros are shown in index view
         """
         user = self.create_and_log_in_user()
         pomodoro1 = self.create_pomodoro_for_user(user, 37)
         pomodoro2 = self.create_pomodoro_for_user(user, 1544)
 
-        date1 = pomodoro1.end_date.date()
-        date2 = pomodoro2.end_date.date()
-        query_set = {}
-        query_set[date2] = [pomodoro2]
-        query_set[date1] = [pomodoro1]
+        calendar_pomodoros = [
+        {
+            'title': 'Pomodoro',
+            'start': pomodoro.start_date.isoformat(),
+            'end': pomodoro.end_date.isoformat(),
+            'url': reverse('pomodoros:show', args=[pomodoro.id])
+        }
+        for pomodoro in [pomodoro1, pomodoro2]
+    ]
 
         response = self.client.get(reverse("pomodoros:index"))
         self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["grouped_pomodoros"], query_set)
+        self.assertQuerySetEqual(response.context["calendar_pomodoros"], calendar_pomodoros)
 
     # UPDATE
     def test_user_can_update_his_pomodoro(self):
@@ -115,32 +119,51 @@ class PomodoroTests(TestCase):
 
     # FOR OTHER USER
 
-    # READ
+    # INDEX
     def test_user_cannot_list_someones_pomodoros(self):
         """
-        This test will check if user can successfully update his pomodoro
+        This test will check if user can only list his pomodoros
         """
         user = self.create_and_log_in_user()
         self.client.logout()
-        pomodoro1 = self.create_pomodoro_for_user(user, 37)
+        self.create_pomodoro_for_user(user, 37)
         other_user = self.create_and_log_in_user("Parker")
         pomodoro2 = self.create_pomodoro_for_user(other_user, 1485)
         pomodoro3 = self.create_pomodoro_for_user(other_user, 12)
 
-        date2 = pomodoro2.end_date.date()
-        date3 = pomodoro3.end_date.date()
-        query_set = {}
-        query_set[date2] = [pomodoro2]
-        query_set[date3] = [pomodoro3]
+        calendar_pomodoros = [
+        {
+            'title': 'Pomodoro',
+            'start': pomodoro.start_date.isoformat(),
+            'end': pomodoro.end_date.isoformat(),
+            'url': reverse('pomodoros:show', args=[pomodoro.id])
+        }
+        for pomodoro in [pomodoro2, pomodoro3]
+        ]
 
         response = self.client.get(reverse("pomodoros:index"))
         self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["grouped_pomodoros"], query_set)
+        self.assertQuerySetEqual(response.context["calendar_pomodoros"], calendar_pomodoros)
+    
+    # SHOW
+    def test_user_cannot_see_someones_pomodoro(self):
+            """
+            This test will check if user cannot see somoeone's pomodoro
+            """
+            user = self.create_and_log_in_user()
+            self.client.logout()
+            pomodoro = self.create_pomodoro_for_user(user, 37)
+            self.create_and_log_in_user("Parker")
+
+            response = self.client.post(
+                reverse("pomodoros:show", args=[pomodoro.id]),
+            )
+            self.assertEqual(response.status_code, 404)
 
     # UPDATE
     def test_user_cannot_update_someones_pomodoro(self):
         """
-        This test will check if user can successfully update his pomodoro
+        This test will check if user cannot update someone's pomodoro
         """
         user = self.create_and_log_in_user()
         self.client.logout()
@@ -155,7 +178,7 @@ class PomodoroTests(TestCase):
     # DELETE
     def test_user_cannot_delete_someones_pomodoro(self):
         """
-        This test will check if user can successfully update his pomodoro
+        This test will check if user cannot delete someone's pomodoro
         """
         user = self.create_and_log_in_user()
         self.client.logout()

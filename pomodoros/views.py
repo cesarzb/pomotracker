@@ -4,14 +4,22 @@ from django.utils import timezone
 from django.http import Http404
 from .models import Pomodoro
 from .forms import PomodoroForm
-from django.db.models.functions import Trunc
-
+from django.urls import reverse
 
 @login_required
 def index(request):
-    grouped_pomodoros = Pomodoro.objects.grouped_by_day(request.user)
+    pomodoros = Pomodoro.objects.filter(user=request.user)
+    calendar_pomodoros = [
+        {
+            'title': 'Pomodoro',
+            'start': pomodoro.start_date.isoformat(),
+            'end': pomodoro.end_date.isoformat(),
+            'url': reverse('pomodoros:show', args=[pomodoro.id])
+        }
+        for pomodoro in pomodoros
+    ]
     return render(
-        request, "pomodoros/index.html", {"grouped_pomodoros": grouped_pomodoros}
+        request, "pomodoros/index.html", {"calendar_pomodoros": calendar_pomodoros}
     )
 
 
@@ -50,6 +58,11 @@ def delete(request, pk):
     pomodoro = pomodoro_belongs_to_user_or_404(request.user, pk)
     pomodoro.delete()
     return redirect("pomodoros:index")
+
+@login_required
+def show(request, pk):
+    pomodoro = pomodoro_belongs_to_user_or_404(request.user, pk)
+    return render(request, "pomodoros/show.html", {"pomodoro": pomodoro})
 
 
 def pomodoro_belongs_to_user_or_404(user, pk):

@@ -25,30 +25,44 @@ A web-based Pomodoro tracking app built with Django, Bootstrap, and FullCalendar
    cd pomodoro-tracker
    ```
 
-2. Install dependencies:
+2. Create database volume in project directory:
+    ```bash
+   mkdir /data/db
+   ```
 
-   ```bash
-   pip install -r requirements.txt
+2. Setup correct permissions (sometimes it doesn't work without it):
+    ```bash
+   sudo chmod 777 data/db
    ```
 
 3. Set up environment variables by creating a `.env` file:
 
    ```env
-   SECRET_KEY=your_secret_key
-   DEBUG=True
-   DATABASE_URL=postgres://user:password@localhost:5432/mydb
+    DB_NAME=postgres
+    DB_USER=postgres
+    DB_PASSWORD=postgres
+    DB_HOST=db
+    DB_PORT=5432
+
+    TEST_DB_NAME=test_mydb
+    TEST_DB_USER=postgres
+    TEST_DB_PASSWORD=postgres
+    TEST_DB_HOST=db
+    TEST_DB_PORT=5432
+
+    SECRET_KEY=super_secret-hello
    ```
 
-4. Run migrations:
+4. Start docker compose:
 
    ```bash
-   python manage.py migrate
+   docker compose up
    ```
 
-5. Start the development server:
+5. If you want to run the tests you can run:
 
    ```bash
-   python manage.py runserver
+   docker compose run web python manage.py test
    ```
 
 ## Usage

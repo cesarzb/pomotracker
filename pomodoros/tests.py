@@ -58,18 +58,20 @@ class PomodoroTests(TestCase):
         pomodoro2 = self.create_pomodoro_for_user(user, 1544)
 
         calendar_pomodoros = [
-        {
-            'title': 'Pomodoro',
-            'start': pomodoro.start_date.isoformat(),
-            'end': pomodoro.end_date.isoformat(),
-            'url': reverse('pomodoros:show', args=[pomodoro.id])
-        }
-        for pomodoro in [pomodoro1, pomodoro2]
-    ]
+            {
+                "title": "Pomodoro",
+                "start": pomodoro.start_date.isoformat(),
+                "end": pomodoro.end_date.isoformat(),
+                "url": reverse("pomodoros:show", args=[pomodoro.id]),
+            }
+            for pomodoro in [pomodoro1, pomodoro2]
+        ]
 
         response = self.client.get(reverse("pomodoros:index"))
-        self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["calendar_pomodoros"], calendar_pomodoros)
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(
+            response.context["calendar_pomodoros"], calendar_pomodoros
+        )
 
     # UPDATE
     def test_user_can_update_his_pomodoro(self):
@@ -132,33 +134,35 @@ class PomodoroTests(TestCase):
         pomodoro3 = self.create_pomodoro_for_user(other_user, 12)
 
         calendar_pomodoros = [
-        {
-            'title': 'Pomodoro',
-            'start': pomodoro.start_date.isoformat(),
-            'end': pomodoro.end_date.isoformat(),
-            'url': reverse('pomodoros:show', args=[pomodoro.id])
-        }
-        for pomodoro in [pomodoro2, pomodoro3]
+            {
+                "title": "Pomodoro",
+                "start": pomodoro.start_date.isoformat(),
+                "end": pomodoro.end_date.isoformat(),
+                "url": reverse("pomodoros:show", args=[pomodoro.id]),
+            }
+            for pomodoro in [pomodoro2, pomodoro3]
         ]
 
         response = self.client.get(reverse("pomodoros:index"))
-        self.assertEquals(response.status_code, 200)
-        self.assertQuerySetEqual(response.context["calendar_pomodoros"], calendar_pomodoros)
-    
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerySetEqual(
+            response.context["calendar_pomodoros"], calendar_pomodoros
+        )
+
     # SHOW
     def test_user_cannot_see_someones_pomodoro(self):
-            """
-            This test will check if user cannot see somoeone's pomodoro
-            """
-            user = self.create_and_log_in_user()
-            self.client.logout()
-            pomodoro = self.create_pomodoro_for_user(user, 37)
-            self.create_and_log_in_user("Parker")
+        """
+        This test will check if user cannot see somoeone's pomodoro
+        """
+        user = self.create_and_log_in_user()
+        self.client.logout()
+        pomodoro = self.create_pomodoro_for_user(user, 37)
+        self.create_and_log_in_user("Parker")
 
-            response = self.client.post(
-                reverse("pomodoros:show", args=[pomodoro.id]),
-            )
-            self.assertEqual(response.status_code, 404)
+        response = self.client.post(
+            reverse("pomodoros:show", args=[pomodoro.id]),
+        )
+        self.assertEqual(response.status_code, 404)
 
     # UPDATE
     def test_user_cannot_update_someones_pomodoro(self):
